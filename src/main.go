@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	Handlers "github.com/deepakraj-p28/RSS_Aggregator/src/handlers"
+	"github.com/deepakraj-p28/RSS_Aggregator/src/handlers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
@@ -28,8 +28,8 @@ func main() {
 	}))
 
 	v1Router := chi.NewRouter()
-	v1Router.Get("/healthcheck", Handlers.HandlerReadiness)
-	v1Router.Get("/err", Handlers.HandlerError)
+	v1Router.Get("/healthcheck", handlers.HandlerReadiness)
+	v1Router.Get("/err", handlers.HandlerError)
 	router.Mount("/v1", v1Router)
 
 	srv := &http.Server{

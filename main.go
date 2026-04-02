@@ -6,15 +6,37 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/deepakraj-p28/RSS_Aggregator/src/handlers"
+	"github.com/deepakraj-p28/RSS_Aggregator/handlers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
+
+	_ "github.com/lib/pq"
 )
+
+// type apiConfig struct {
+// 	DB *database.Queries
+// }
 
 func main() {
 	godotenv.Overload()
 	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("PORT not found in env")
+	}
+	// dbUrl := os.Getenv("DB_URL")
+	// if dbUrl == "" {
+	// 	log.Fatal("DB_URL not found in env")
+	// }
+
+	// conn, err := sql.Open("postgres", dbUrl)
+	// if err != nil {
+	// 	log.Fatal("Cannot connect to DB")
+	// }
+
+	// apiCnfg := apiConfig{
+	// 	DB: database.New(conn),
+	// }
 
 	router := chi.NewRouter()
 
@@ -27,9 +49,13 @@ func main() {
 		MaxAge:           300,
 	}))
 
+	apicnf := handlers.DBConnection()
+
 	v1Router := chi.NewRouter()
 	v1Router.Get("/healthcheck", handlers.HandlerReadiness)
 	v1Router.Get("/err", handlers.HandlerError)
+	v1Router.Post("/user", apicnf.HandlerCreateUser)
+
 	router.Mount("/v1", v1Router)
 
 	srv := &http.Server{

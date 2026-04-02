@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/deepakraj-p28/RSS_Aggregator/internal/database"
-	structmodels "github.com/deepakraj-p28/RSS_Aggregator/structModels"
 	"github.com/google/uuid"
 )
 
@@ -35,5 +34,5 @@ func (apiCnfg *apiConfig) HandlerCreateUser(respWriter http.ResponseWriter, req 
 		return
 	}
 
-	RespondWithJson(respWriter, 200, structmodels.DatabaseUserToUser(user))
+	RespondWithJson(respWriter, 200, model.DatabaseUserToUser(user))
 }

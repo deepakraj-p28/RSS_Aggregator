@@ -1,4 +1,4 @@
-package handlers
+package main
 
 import (
 	"net/http"
@@ -8,6 +8,6 @@ import (
 
 func HandlerError(respWriter http.ResponseWriter, request *http.Request) {
 	//(respWriter, 400, "Something went wrong")
-	RespondWithError(respWriter, 400, "Something went wrong")
+	respondWithError(respWriter, 400, "Something went wrong")
 
 }

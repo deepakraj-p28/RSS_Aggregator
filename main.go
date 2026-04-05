@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/deepakraj-p28/RSS_Aggregator/handlers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
@@ -49,12 +48,13 @@ func main() {
 		MaxAge:           300,
 	}))
 
-	apicnf := handlers.DBConnection()
+	apicnf := DBConnection()
 
 	v1Router := chi.NewRouter()
-	v1Router.Get("/healthcheck", handlers.HandlerReadiness)
-	v1Router.Get("/err", handlers.HandlerError)
-	v1Router.Post("/user", apicnf.HandlerCreateUser)
+	v1Router.Get("/healthcheck", HandlerReadiness)
+	v1Router.Get("/err", HandlerError)
+	v1Router.Post("/user", apicnf.handlerCreateUser)
+	v1Router.Get("/user", apicnf.middleware_Auth(apicnf.handlerGetUser))
 
 	router.Mount("/v1", v1Router)
 

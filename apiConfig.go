@@ -1,8 +1,7 @@
-package handlers
+package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 
@@ -13,7 +12,7 @@ type apiConfig struct {
 	DB *database.Queries
 }
 
-var apiCnfg apiConfig
+//var apiCnfg apiConfig
 
 func DBConnection() *apiConfig {
 	dbUrl := os.Getenv("DB_URL")
@@ -26,10 +25,10 @@ func DBConnection() *apiConfig {
 		log.Fatal("Cannot connect to DB")
 	}
 
-	apiCnfg = apiConfig{
+	apiCnfg := apiConfig{
 		DB: database.New(conn),
 	}
-	fmt.Printf("Returning pointer to api Config: %v", &apiCnfg)
+
 	return &apiCnfg
 
 }

@@ -1,4 +1,4 @@
-package handlers
+package main
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func RespondWithJson(respWriter http.ResponseWriter, respCode int, payload interface{}) {
+func respondWithJson(respWriter http.ResponseWriter, respCode int, payload interface{}) {
 	data, err := json.Marshal(payload)
 	if err != nil {
 		log.Printf("Failed to marshal JSON response: %v", payload)
@@ -18,7 +18,7 @@ func RespondWithJson(respWriter http.ResponseWriter, respCode int, payload inter
 	respWriter.Write(data)
 }
 
-func RespondWithError(respWriter http.ResponseWriter, respCode int, errMsg string) {
+func respondWithError(respWriter http.ResponseWriter, respCode int, errMsg string) {
 	if respCode > 499 {
 		log.Printf("Responding with error: %s\n", errMsg)
 	}
@@ -29,7 +29,7 @@ func RespondWithError(respWriter http.ResponseWriter, respCode int, errMsg strin
 		Error string `json:"error"`
 	}
 
-	RespondWithJson(respWriter, respCode, errorResponse{
+	respondWithJson(respWriter, respCode, errorResponse{
 		Error: errMsg,
 	})
 }

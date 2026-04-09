@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -41,4 +42,15 @@ func (apiCnfg *apiConfig) handlerCreateUser(respWriter http.ResponseWriter, req 
 func (apiCnfg *apiConfig) handlerGetUser(respWriter http.ResponseWriter, req *http.Request, user database.User) {
 	//Fetching authenticated user is being done by middleware_auth
 	respondWithJson(respWriter, 200, models.DatabaseUserToUser(user))
+}
+
+func (apiCnfg *apiConfig) handlerGetPosts(respWriter http.ResponseWriter, req *http.Request, user database.User) {
+	posts, err := apiCnfg.DB.GetPosts(req.Context(), database.GetPostsParams{
+		UserID: user.ID,
+		Limit:  5,
+	})
+	if err != nil {
+		log.Println("Couldn't fetch posts for user:", err)
+	}
+	respondWithJson(respWriter, 200, posts)
 }

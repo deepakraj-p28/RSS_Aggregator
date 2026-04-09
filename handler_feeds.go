@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (apiCnfg *apiConfig) handlerCreateFeed(respWriter http.ResponseWriter, req http.Request, user database.User) {
+func (apiCnfg *apiConfig) handlerCreateFeed(respWriter http.ResponseWriter, req *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
 		Url  string `json:"url"`
@@ -39,4 +39,24 @@ func (apiCnfg *apiConfig) handlerCreateFeed(respWriter http.ResponseWriter, req 
 	}
 
 	respondWithJson(respWriter, 200, models.DatabaseFeedToFeed(feed))
+}
+
+func (apiCnfg *apiConfig) handlerGetFeed(respWriter http.ResponseWriter, req *http.Request, user database.User) {
+	feed, err := apiCnfg.DB.GetFeed(req.Context(), user.ID)
+	if err != nil {
+		respondWithError(respWriter, 400, "Error fetching feed")
+		return
+	}
+
+	respondWithJson(respWriter, 200, models.DatabaseFeedToFeed(feed))
+}
+
+func (apiCnfg *apiConfig) handlerGetFeeds(respWriter http.ResponseWriter, req *http.Request) {
+	feeds, err := apiCnfg.DB.GetFeeds(req.Context())
+	if err != nil {
+		respondWithError(respWriter, 400, "Error fetching feed")
+		return
+	}
+
+	respondWithJson(respWriter, 200, models.DatabaseFeedsToFeeds(feeds))
 }

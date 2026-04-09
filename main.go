@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
@@ -23,19 +24,6 @@ func main() {
 	if port == "" {
 		log.Fatal("PORT not found in env")
 	}
-	// dbUrl := os.Getenv("DB_URL")
-	// if dbUrl == "" {
-	// 	log.Fatal("DB_URL not found in env")
-	// }
-
-	// conn, err := sql.Open("postgres", dbUrl)
-	// if err != nil {
-	// 	log.Fatal("Cannot connect to DB")
-	// }
-
-	// apiCnfg := apiConfig{
-	// 	DB: database.New(conn),
-	// }
 
 	router := chi.NewRouter()
 
@@ -50,11 +38,24 @@ func main() {
 
 	apicnf := DBConnection()
 
+	startScraping(apicnf.DB, 10, 2*time.Minute)
+
 	v1Router := chi.NewRouter()
 	v1Router.Get("/healthcheck", HandlerReadiness)
 	v1Router.Get("/err", HandlerError)
 	v1Router.Post("/user", apicnf.handlerCreateUser)
 	v1Router.Get("/user", apicnf.middleware_Auth(apicnf.handlerGetUser))
+
+	v1Router.Post("/feed", apicnf.middleware_Auth(apicnf.handlerCreateFeed))
+	v1Router.Get("/feed", apicnf.middleware_Auth(apicnf.handlerGetFeed))
+	v1Router.Get("/feed", apicnf.handlerGetFeeds)
+
+	v1Router.Post("/feedfollows", apicnf.middleware_Auth(apicnf.handlerCreateFeedFollows))
+	v1Router.Get("/feedfollows", apicnf.middleware_Auth(apicnf.handlerGetFeedFollowsForUser))
+	v1Router.Get("/feedfollows/{feedFollowID}", apicnf.handlerGetUsersForFeed)
+	v1Router.Delete("/feedfollows/{feedFollowID}", apicnf.middleware_Auth(apicnf.handlerDeleteFeedFollow))
+
+	v1Router.Get("/posts", apicnf.middleware_Auth(apicnf.handlerGetPosts))
 
 	router.Mount("/v1", v1Router)
 
